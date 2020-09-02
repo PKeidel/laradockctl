@@ -69,7 +69,12 @@ class LaravelReader extends ProjectReader {
         $neededServices[$this->webserver] = ['webserver'];
 
         // check if commands do exist, then a scheduler is maybe needed
-        if((file_exists($path = base_path('app/Console/Commands')) && count(scandir($path)) > 2) || $this->command->confirm('Do you want to active the scheduler (container: php-worker)?')) {
+        $autoenable = (file_exists($path = base_path('app/Console/Commands')) && count(scandir($path)) > 2);
+        if(
+            $autoenable || $this->command->confirm('Do you want to active the scheduler (container: php-worker)?')
+        ) {
+            if($autoenable)
+                $this->command->warn('console commands found, scheduler service is activated automaticly');
             if(file_exists($path = base_path('laradock/php-worker/supervisord.d/laravel-scheduler.conf.example')))
                 rename($path, base_path('laradock/php-worker/supervisord.d/laravel-scheduler.conf'));
             $neededServices['php-worker'][] = 'scheduler';
@@ -117,7 +122,7 @@ class LaravelReader extends ProjectReader {
 
     private function askForAndSetPhpVersion() {
         // accourding to laradock/.env PHP_VERSION
-        $allowedPhpVersions = ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4'];
+        $allowedPhpVersions = ['7.1', '7.2', '7.3', '7.4'];
         $currentPhpVersion  = $this->envFile->readKey('PHP_VERSION');
         while(!in_array($phpVersion = $this->command->askWithCompletion("What PHP version do you want to use?", $allowedPhpVersions, $currentPhpVersion), $allowedPhpVersions)) {
             // no op

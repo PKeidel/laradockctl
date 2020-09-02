@@ -32,7 +32,6 @@ class LaradockConfigureCommand extends Command {
         $this->editLaradockEnvConfig();
 
         // clean up
-        dump($this->containers);
         if(in_array('apc', $this->containers))
             unset($this->containers[array_search('apc', $this->containers)]);
 
@@ -44,6 +43,21 @@ class LaradockConfigureCommand extends Command {
             $this->yaml->unset("volumes.$vol");
 
         // check for any LARADOCK_REPLACE_IMAGE_* env variables
+        $this->warn('You can replace/override the container image to use your own ones');
+        $this->info('  Example:');
+        $this->info('    Add to .env: LARADOCK_REPLACE_IMAGE_PHP_FPM="example.com/myown/php-fpm:7-latest"');
+        $this->info('');
+        $this->warn('This are the possible keys you can replace:');
+        foreach($this->containers as $container) {
+            $c = strtoupper(str_replace(['-'], '_', $container));
+            $this->info("  LARADOCK_REPLACE_IMAGE_$c");
+        }
+        $this->info('');
+
+        if (!$this->confirm('Make the changes in your .env and then hit ENTER to resume the configurtion', true)) {
+            $this->error('Exiting. Restart the command to complete your configuration.');
+            return;
+        }
 
         foreach($this->containers as $container) {
             $c = strtoupper(str_replace(['-'], '_', $container));
@@ -59,16 +73,17 @@ class LaradockConfigureCommand extends Command {
         }
 
         $this->yaml->save();
+        $this->info('');
 
-        $this->info("Killing all containers");
+        $this->warn("Killing all containers");
         sleep(1);
         passthru("cd {$this->dirname} && docker-compose kill");
 
-        $this->info("Building containers: $containersStr");
+        $this->warn("Building containers: $containersStr");
         sleep(1);
         passthru("cd {$this->dirname} && docker-compose build $containersStr");
 
-        $this->info("Starting containers: $containersStr");
+        $this->warn("Starting containers: $containersStr");
         sleep(1);
         passthru("cd {$this->dirname} && docker-compose up -d $containersStr");
 
@@ -95,9 +110,9 @@ class LaradockConfigureCommand extends Command {
                 ->first();
 
             $dbname = $this->envFileProject->readKey('DB_DATABASE');
-            $this->info("existing databases");
+            $this->info("existing databases:");
             passthru("cd {$this->dirname} && echo \"show databases;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
-            $this->info("create database $dbname");
+            $this->info("trying to create database: $dbname");
             passthru("cd {$this->dirname} && echo \"create database $dbname;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
 
             $dockerConfig['DB_USERNAME'] = 'root';
@@ -138,19 +153,18 @@ class LaradockConfigureCommand extends Command {
         $this->stackName  = $projectReader->getStackName();
         $this->containers = array_keys($services);
 
-        // also load depends_on containers
-        $this->detectDependsOn();
-
         $this->yaml = Yaml::parse(base_path('laradock/docker-compose.yml'));
         $this->laradockEnvFile = new EnvFile(base_path("laradock/.env"));
         $this->envFileProject  = new EnvFile(base_path(".env"));
+
+        // also load depends_on containers
+        $this->detectDependsOn();
     }
 
     /**
      * check containers for depends_on key and add these to $this->containers as well
      */
     private function detectDependsOn(): void {
-//        dump($this->yaml);
         for ($i = 0; $i < count($this->containers); $i++) {
             $additional = $this->yaml->get("services." . $this->containers[$i] . ".depends_on");
             if (is_array($additional)) {

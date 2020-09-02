@@ -5,8 +5,10 @@ namespace PKeidel\Laradockctl\Providers;
 use Illuminate\Support\ServiceProvider;
 use PKeidel\Laradockctl\Commands\LaradockConfigureCommand;
 use PKeidel\Laradockctl\Commands\LaradockInstallCommand;
+use PKeidel\Laradockctl\Commands\LaradockPsCommand;
 use PKeidel\Laradockctl\Commands\LaradockSetEnvCommand;
 use PKeidel\Laradockctl\Commands\LaradockStopCommand;
+use PKeidel\Laradockctl\Commands\LaradockTailCommand;
 use PKeidel\Laradockctl\Commands\LaradockUpCommand;
 use PKeidel\Laradockctl\Commands\LaradockUpdateCommand;
 use PKeidel\Laradockctl\Commands\LaradockExecCommand;
@@ -39,6 +41,8 @@ class LaradockctlServiceProvider extends ServiceProvider {
                 LaradockUpCommand::class,
                 LaradockStopCommand::class,
                 LaradockExecCommand::class,
+                LaradockPsCommand::class,
+                LaradockTailCommand::class,
             ]);
         }
 

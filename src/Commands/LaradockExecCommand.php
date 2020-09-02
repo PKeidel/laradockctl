@@ -12,14 +12,14 @@ class LaradockExecCommand extends Command {
      *
      * @var string
      */
-    protected $signature = 'laradock:exec {container?}';
+    protected $signature = 'laradock:exec {container=php-fpm} {--cmd=bash}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Runs \'bash\' inside a docker container';
+    protected $description = 'Runs a command inside a docker container. See option --cmd';
 
     /**
      * Execute the console command.
@@ -32,12 +32,14 @@ class LaradockExecCommand extends Command {
             exit;
         }
 
-        $container = $this->argument('container') ?? 'php-fpm';
+        $container = $this->argument('container');
 
-        $cmd = "docker-compose exec $container bash";
+        $cmd = $this->option('cmd');
+
+        $cmd = "docker-compose exec $container $cmd";
 
         $this->info("Running command: $cmd");
         sleep(1);
-        passthru("cd {$this->dirname} && $cmd");
+        passthru("cd {$this->dirname} && docker-compose exec $container $cmd");
     }
 }
