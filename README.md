@@ -23,10 +23,16 @@ How it works:
 ## Install
 
 ```shell
-composer require pkeidel/laradock
+composer require pkeidel/laradockctl
 ```
 
 ### Usage
+* `laradock:install`
+* `laradock:configure`
+* `laradock:up`
+
+
+### Commands
 There are the following artisan commands:
 * `laradock:install`     Installs laradock from github. If git is found it uses git else it downloads it as zip file
 * `laradock:configure`   Enables the specified services and write the needed configuration to ./.env and laradock/.env

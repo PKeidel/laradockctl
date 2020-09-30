@@ -61,10 +61,10 @@ class LaradockUpdateCommand extends Command {
 
     public function updateFromGit($version) {
         $this->info(__FUNCTION__." $version");
-        exec("cd $this->dirname && git fetch && git checkout $version", $output, $status);
+        passthru("cd $this->dirname && git fetch && git checkout $version", $status);
     }
 
     private function removeFolder() {
-        exec("rm -rf $this->dirname", $output, $status);
+        passthru("rm -rf $this->dirname", $status);
     }
 }

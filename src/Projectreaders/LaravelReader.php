@@ -71,7 +71,7 @@ class LaravelReader extends ProjectReader {
         // check if commands do exist, then a scheduler is maybe needed
         $autoenable = (file_exists($path = base_path('app/Console/Commands')) && count(scandir($path)) > 2);
         if(
-            $autoenable || $this->command->confirm('Do you want to active the scheduler (container: php-worker)?')
+            $autoenable || $this->command->confirm('Do you want to activate the scheduler (container: php-worker)?')
         ) {
             if($autoenable)
                 $this->command->warn('console commands found, scheduler service is activated automaticly');
@@ -81,7 +81,7 @@ class LaravelReader extends ProjectReader {
         }
 
         // check if jobs do exist, then a queue is maybe needed
-        if((file_exists($path = base_path('app/Jobs')) && count(scandir($path)) > 2) || $this->command->confirm('Do you want to active the queue workers (container: php-worker)?')) {
+        if((file_exists($path = base_path('app/Jobs')) && count(scandir($path)) > 2) || $this->command->confirm('Do you want to activate the queue workers (container: php-worker)?')) {
             if(file_exists($path = base_path('laradock/php-worker/supervisord.d/laravel-worker.conf.example'))) {
                 rename($path, base_path('laradock/php-worker/supervisord.d/laravel-worker.conf'));
             }

@@ -40,6 +40,6 @@ class LaradockExecCommand extends Command {
 
         $this->info("Running command: $cmd");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose exec $container $cmd");
+        passthru("cd {$this->dirname} && $cmd");
     }
 }

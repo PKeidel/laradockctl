@@ -109,7 +109,7 @@ class LaradockConfigureCommand extends Command {
                 })
                 ->first();
 
-            $dbname = $this->envFileProject->readKey('DB_DATABASE');
+            $dbname = $this->envFileProject->readKey('DB_DATABASE') ?: $this->stackName;
             $this->info("existing databases:");
             passthru("cd {$this->dirname} && echo \"show databases;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
             $this->info("trying to create database: $dbname");
