@@ -113,7 +113,7 @@ class LaradockConfigureCommand extends Command {
             $this->info("existing databases:");
             passthru("cd {$this->dirname} && echo \"show databases;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
             $this->info("trying to create database: $dbname");
-            passthru("cd {$this->dirname} && echo \"create database $dbname;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
+            passthru("cd {$this->dirname} && echo \"create database `$dbname`;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
 
             $dockerConfig['DB_USERNAME'] = 'root';
             $dockerConfig['DB_PASSWORD'] = $rootPw;
