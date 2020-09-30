@@ -8,7 +8,7 @@ use PKeidel\Laradockctl\Env\EnvFile;
 class LaradockUpCommand extends Command {
     use GitZipHelper;
 
-    protected $signature = 'laradock:up {--detach} {--only=}';
+    protected $signature = 'laradock:up {--d|detach} {--only=}';
     protected $description = 'Starts the specified containers from .env LARADOCK_CONTAINERS';
 
     public function handle() {
