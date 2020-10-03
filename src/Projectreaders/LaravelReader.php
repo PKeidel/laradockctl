@@ -37,10 +37,10 @@ class LaravelReader extends ProjectReader {
         $neededServices  = $containers;
 
         // main database
-        $queueConnection = config('database.default');
-        $queueDriver     = config("database.connections.$queueConnection.driver");
-        if(in_array($queueDriver, ['mysql', 'pgsql', 'sqlsrv']))
-            $neededServices[$queueDriver][] = 'maindatabase';
+        $dbConnection = config('database.default');
+        $dbDriver     = config("database.connections.$dbConnection.driver");
+        if(in_array($dbDriver, ['mysql', 'pgsql', 'sqlsrv']))
+            $neededServices[$dbDriver][] = 'maindatabase';
 
         // broadcasting
         if(strtolower(config('broadcasting.default')) === 'redis')
@@ -63,8 +63,10 @@ class LaravelReader extends ProjectReader {
         // queue
         $queueConnection = config('queue.default');
         $queueDriver     = config("queue.connections.$queueConnection.driver");
-        if(in_array($queueDriver, ['database', 'beanstalkd', 'redis']))
+        if(in_array($queueDriver, ['beanstalkd', 'redis']))
             $neededServices[$queueDriver][] = 'queue';
+        elseif($queueDriver === 'database')
+            $neededServices[$dbDriver][] = 'queue';
 
         $neededServices[$this->webserver] = ['webserver'];
 
