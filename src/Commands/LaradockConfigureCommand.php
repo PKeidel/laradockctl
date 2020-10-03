@@ -182,7 +182,9 @@ class LaradockConfigureCommand extends Command {
      * read config and set some .env values
      */
     private function editLaradockEnvConfig(): void {
+        $this->laradockEnvFile->replaceOrAdd('WORKSPACE_INSTALL_PHPREDIS', in_array('redis', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_PHPREDIS', in_array('redis', $this->containers));
+        $this->laradockEnvFile->replaceOrAdd('PHP_WORKER_INSTALL_REDIS', in_array('redis', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_PGSQL', in_array('postgres', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_APCU', in_array('apc', $this->containers));
     }
