@@ -111,9 +111,9 @@ class LaradockConfigureCommand extends Command {
 
             $dbname = $this->envFileProject->readKey('DB_DATABASE') ?: $this->stackName;
             $this->info("existing databases:");
-            passthru("cd {$this->dirname} && echo \"show databases;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
+            passthru("cd {$this->dirname} && (echo \"show databases;\" | docker-compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
             $this->info("trying to create database: $dbname");
-            passthru("cd {$this->dirname} && echo \"create database `$dbname`;\" | docker-compose exec -T mysql mysql -uroot -p$rootPw");
+            passthru("cd {$this->dirname} && (echo \"create database \`$dbname\`;\" | docker-compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
 
             $dockerConfig['DB_USERNAME'] = 'root';
             $dockerConfig['DB_PASSWORD'] = $rootPw;
@@ -186,6 +186,7 @@ class LaradockConfigureCommand extends Command {
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_PHPREDIS', in_array('redis', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_WORKER_INSTALL_REDIS', in_array('redis', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_PGSQL', in_array('postgres', $this->containers));
+        $this->laradockEnvFile->replaceOrAdd('PHP_WORKER_INSTALL_PGSQL', in_array('postgres', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_APCU', in_array('apc', $this->containers));
     }
 }
