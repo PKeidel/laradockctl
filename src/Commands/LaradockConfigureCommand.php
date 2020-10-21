@@ -81,11 +81,21 @@ class LaradockConfigureCommand extends Command {
 
         $this->warn("Building containers: $containersStr");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose build $containersStr");
+        passthru("cd {$this->dirname} && docker-compose build $containersStr", $returnValue);
+
+        if($returnValue !== 0) {
+            $this->error('Aborting due to error while building continers: ' . $containersStr);
+            exit;
+        }
 
         $this->warn("Starting containers: $containersStr");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose up -d $containersStr");
+        passthru("cd {$this->dirname} && docker-compose up -d $containersStr", $returnValue);
+
+        if($returnValue !== 0) {
+            $this->error('Aborting due to error while starting/running continers: ' . $containersStr);
+            exit;
+        }
 
         $dockerConfig = [];
 
