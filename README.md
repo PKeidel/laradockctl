@@ -9,7 +9,7 @@ This package does the following things:
  * download laradock
  * detect which services are needed and configure them
  
-At the moment is supports:
+At the moment it supports:
  * Laravel
 
 For laravel it also does:
@@ -23,7 +23,7 @@ How it works:
 ## Install
 
 ```shell
-composer require pkeidel/laradockctl
+composer require pkeidel/laradockctl --dev
 ```
 
 ### Usage
