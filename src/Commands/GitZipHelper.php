@@ -6,22 +6,28 @@ trait GitZipHelper {
 
     public $dirname = "laradock/";
 
-    public function downloadZip($version) {
-        $this->info(__FUNCTION__);
-        // https://github.com/laradock/laradock/archive/v9.5.zip
+    public function downloadZip($tag) {
+        $this->info(__FUNCTION__ . ' is not implemented yet. sorry.');
+        // https://github.com/laradock/laradock/archive/$tag.zip
     }
 
     public function isGitInstalled() {
-        exec('type git', $output, $status);
+        exec('which git', $output, $status);
         return $status === 0;
     }
 
     public function getLatestTagFromGithub() {
-        // TODO
-        return 'v9.5';
-        $url = "https://api.github.com/repos/laradock/laradock/tags";
-        $body = file_get_contents($url);
-        dd($body);
+        $url = "https://api.github.com/repos/laradock/laradock/releases/latest";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'php laradockctl');
+        $body = curl_exec($ch);
+        curl_close($ch);
+
+        $json = json_decode($body);
+        return $json->tag_name;
     }
 
     private function isInstalled() {

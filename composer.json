@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^7.3",
-        "ext-yaml": "*"
+        "ext-yaml": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.0"
