@@ -103,7 +103,7 @@ class LaravelReader extends ProjectReader {
             preg_match($stackNameRegex, $stackName, $matches);
             if(count($matches) === 2)
                 break;
-            $this->warn('Name must match the Regex!');
+            $this->command->warn('Name must match the Regex!');
         }
         $this->envFile->replaceOrAdd('COMPOSE_PROJECT_NAME', $stackName);
         return $stackName;
