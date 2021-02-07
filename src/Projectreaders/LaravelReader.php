@@ -124,8 +124,8 @@ class LaravelReader extends ProjectReader {
 
     private function askForAndSetPhpVersion() {
         // accourding to laradock/.env PHP_VERSION
-        $allowedPhpVersions = ['7.1', '7.2', '7.3', '7.4'];
-        $currentPhpVersion  = $this->envFile->readKey('PHP_VERSION');
+        $allowedPhpVersions = ['7.1', '7.2', '7.3', '7.4', '8.0'];
+        $currentPhpVersion  = $this->envFile->readKey('PHP_VERSION') ?? last($allowedPhpVersions);
         while(!in_array($phpVersion = $this->command->askWithCompletion("What PHP version do you want to use?", $allowedPhpVersions, $currentPhpVersion), $allowedPhpVersions)) {
             // no op
         }

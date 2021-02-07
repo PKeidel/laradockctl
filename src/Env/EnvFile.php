@@ -6,7 +6,7 @@ use PKeidel\Laradockctl\Commands\FileHelper;
 
 class EnvFile {
     use FileHelper {
-        replaceOrAdd as _replaceOrAdd;
+        FileHelper::replaceOrAdd as _replaceOrAdd;
     }
 
     private $envfile;

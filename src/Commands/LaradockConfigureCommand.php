@@ -37,10 +37,7 @@ class LaradockConfigureCommand extends Command {
 
         $this->envFileProject->replaceOrAdd('LARADOCK_CONTAINERS', $containersStr = implode(' ', $this->containers));
 
-        // remove not needed volumes
-        $removeVolumes = array_diff($this->yaml->getKeys('volumes'), array_merge($this->containers, ['elasticsearch']));
-        foreach($removeVolumes as $vol)
-            $this->yaml->unset("volumes.$vol");
+        $this->remove_not_needed_volumes();
 
         // check for any LARADOCK_REPLACE_IMAGE_* env variables
         $this->warn('You can replace/override the container image to use your own ones');
@@ -198,5 +195,15 @@ class LaradockConfigureCommand extends Command {
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_PGSQL', in_array('postgres', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_WORKER_INSTALL_PGSQL', in_array('postgres', $this->containers));
         $this->laradockEnvFile->replaceOrAdd('PHP_FPM_INSTALL_APCU', in_array('apc', $this->containers));
+
+        $this->laradockEnvFile->replaceOrAdd('DATA_PATH_HOST', base_path('laradock/data'));
+    }
+
+    private function remove_not_needed_volumes(): void {
+        $removeVolumes = array_diff($this->yaml->getKeys('volumes'), array_merge($this->containers, ['elasticsearch', 'docker-in-docker']));
+        foreach ($removeVolumes as $vol) {
+            $this->warn("Volume $vol is beein removed");
+            $this->yaml->unset("volumes.$vol");
+        }
     }
 }
