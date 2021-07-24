@@ -43,10 +43,12 @@ class LaradockInstallCommand extends Command {
         }
 
         $this->createEnv();
+
+        return 0;
     }
 
     private function createEnv() {
-        exec("cd $this->dirname && cp env-example .env");
+        exec("cd $this->dirname && cp .env.example .env");
     }
 
     public function downloadFromGit($version) {
