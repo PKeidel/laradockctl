@@ -164,6 +164,12 @@ class LaradockConfigureCommand extends Command {
         $this->laradockEnvFile = new EnvFile(base_path("laradock/.env"));
         $this->envFileProject  = new EnvFile(base_path(".env"));
 
+        // remove depends_on workspace
+        $this->yaml->unset('services.php-fpm.depends_on');
+        $this->yaml->unset('services.php-worker.depends_on');
+        $this->yaml->unset('services.laravel-horizon.depends_on');
+        $this->yaml->unset('services.hhvm.depends_on');
+
         // also load depends_on containers
         $this->detectDependsOn();
     }
@@ -202,7 +208,7 @@ class LaradockConfigureCommand extends Command {
     private function remove_not_needed_volumes(): void {
         $removeVolumes = array_diff($this->yaml->getKeys('volumes'), array_merge($this->containers, ['elasticsearch', 'docker-in-docker']));
         foreach ($removeVolumes as $vol) {
-            $this->warn("Volume $vol is beein removed");
+            $this->warn("Volume $vol is being removed");
             $this->yaml->unset("volumes.$vol");
         }
     }

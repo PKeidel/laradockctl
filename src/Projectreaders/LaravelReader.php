@@ -25,8 +25,8 @@ class LaravelReader extends ProjectReader {
         $this->envFile = new EnvFile(base_path("laradock/.env"));
         $this->stackname = $this->askForAndSetStackName();
         $this->webserver = $this->askForAndSetWebserver();
-        $this->askForAndSetPhpVersion();
         $this->askForAndSetPhpInterpreter();
+        $this->askForAndSetPhpVersion();
     }
 
     public function getStackName() {
@@ -115,20 +115,38 @@ class LaravelReader extends ProjectReader {
         $infos             = $envFile->readKey('LARADOCK_CONTAINERS');
         $infos             = explode(' ', $infos);
         $currentWebserver  = count($infos) ? (in_array($infos[0], $allowedWebservers) ? $infos[0] : $allowedWebservers[0]) : NULL;
-        while(!in_array($webserver = $this->command->askWithCompletion("What webserver do you want to use?", $allowedWebservers, $currentWebserver), $allowedWebservers)) {
-            // no op
-        }
+        while(!in_array($webserver = $this->command->askWithCompletion("What webserver do you want to use?", $allowedWebservers, $currentWebserver), $allowedWebservers));
         $envFile->replaceOrAdd('LARADOCK_CONTAINERS', $webserver);
         return $webserver;
     }
 
     private function askForAndSetPhpVersion() {
+
+        // if user selected hhvm, don't ask him for php version
+        if($this->envFile->readKey('PHP_INTERPRETER') !== 'php-fpm') {
+            return;
+        }
+
         // accourding to laradock/.env PHP_VERSION
         $allowedPhpVersions = ['7.1', '7.2', '7.3', '7.4', '8.0'];
-        $currentPhpVersion  = $this->envFile->readKey('PHP_VERSION') ?? last($allowedPhpVersions);
-        while(!in_array($phpVersion = $this->command->askWithCompletion("What PHP version do you want to use?", $allowedPhpVersions, $currentPhpVersion), $allowedPhpVersions)) {
-            // no op
+
+        try {
+            $json = json_decode(file_get_contents('https://hub.docker.com/v2/repositories/laradock/php-fpm/tags/?page_size=100&page=1&ordering=last_updated'), true, 512, JSON_THROW_ON_ERROR);
+            $allowedPhpVersions = [];
+            foreach($json['results'] as $result) {
+                if(substr($result['name'], 0, 7) === 'latest-') {
+                    $allowedPhpVersions[] = substr($result['name'], 7);
+                }
+            }
+            unset($json);
+            sort($allowedPhpVersions);
+//            $this->command->info('Allowed: ' . implode(', ', $allowedPhpVersions));
+        } catch (\Throwable $t) {
+            // nothing, just keep the default versions
         }
+
+        $currentPhpVersion  = $this->envFile->readKey('PHP_VERSION') ?? last($allowedPhpVersions);
+        while(!in_array($phpVersion = $this->command->askWithCompletion("What PHP version do you want to use?", $allowedPhpVersions, $currentPhpVersion), $allowedPhpVersions));
         $this->envFile->replaceOrAdd('PHP_VERSION', $phpVersion);
     }
 
@@ -136,9 +154,7 @@ class LaravelReader extends ProjectReader {
         // accourding to laradock/.env PHP_VERSION
         $allowedInterpreters = ['hhvm', 'php-fpm'];
         $currentPhpInterpreter  = $this->envFile->readKey('PHP_INTERPRETER');
-        while(!in_array($phpInterpreter = $this->command->askWithCompletion("What PHP interpreter do you want to use?", $allowedInterpreters, $currentPhpInterpreter), $allowedInterpreters)) {
-            // no op
-        }
+        while(!in_array($phpInterpreter = $this->command->askWithCompletion("What PHP interpreter do you want to use?", $allowedInterpreters, $currentPhpInterpreter), $allowedInterpreters));
         $this->envFile->replaceOrAdd('PHP_INTERPRETER', $phpInterpreter);
     }
 }
