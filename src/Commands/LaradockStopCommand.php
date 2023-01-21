@@ -12,6 +12,6 @@ class LaradockStopCommand extends Command {
     protected $description = 'Stops all running containers';
 
     public function handle() {
-        passthru("cd {$this->dirname} && docker-compose stop");
+        passthru("cd {$this->dirname} && docker compose stop");
     }
 }

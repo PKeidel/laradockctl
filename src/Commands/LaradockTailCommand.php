@@ -11,6 +11,6 @@ class LaradockTailCommand extends Command {
     protected $description = 'Show and follow all log outputs';
 
     public function handle() {
-        passthru("cd {$this->dirname} && docker-compose logs -f");
+        passthru("cd {$this->dirname} && docker compose logs -f");
     }
 }

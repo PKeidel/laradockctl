@@ -11,6 +11,6 @@ class LaradockPsCommand extends Command {
     protected $description = 'Lists the created containers';
 
     public function handle() {
-        passthru("cd {$this->dirname} && docker-compose ps");
+        passthru("cd {$this->dirname} && docker compose ps");
     }
 }

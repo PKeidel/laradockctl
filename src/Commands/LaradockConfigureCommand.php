@@ -74,11 +74,11 @@ class LaradockConfigureCommand extends Command {
 
         $this->warn("Killing all containers");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose kill");
+        passthru("cd {$this->dirname} && docker compose kill");
 
         $this->warn("Building containers: $containersStr");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose build $containersStr", $returnValue);
+        passthru("cd {$this->dirname} && docker compose build $containersStr", $returnValue);
 
         if($returnValue !== 0) {
             $this->error('Aborting due to error while building continers: ' . $containersStr);
@@ -87,7 +87,7 @@ class LaradockConfigureCommand extends Command {
 
         $this->warn("Starting containers: $containersStr");
         sleep(1);
-        passthru("cd {$this->dirname} && docker-compose up -d $containersStr", $returnValue);
+        passthru("cd {$this->dirname} && docker compose up -d $containersStr", $returnValue);
 
         if($returnValue !== 0) {
             $this->error('Aborting due to error while starting/running continers: ' . $containersStr);
@@ -118,9 +118,9 @@ class LaradockConfigureCommand extends Command {
 
             $dbname = $this->envFileProject->readKey('DB_DATABASE') ?: $this->stackName;
             $this->info("existing databases:");
-            passthru("cd {$this->dirname} && (echo \"show databases;\" | docker-compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
+            passthru("cd {$this->dirname} && (echo \"show databases;\" | docker compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
             $this->info("trying to create database: $dbname");
-            passthru("cd {$this->dirname} && (echo \"create database \`$dbname\`;\" | docker-compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
+            passthru("cd {$this->dirname} && (echo \"create database \`$dbname\`;\" | docker compose exec -T mysql mysql -h 127.0.0.1 -uroot -p$rootPw)");
 
             $dockerConfig['DB_USERNAME'] = 'root';
             $dockerConfig['DB_PASSWORD'] = $rootPw;

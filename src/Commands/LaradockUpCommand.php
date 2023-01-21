@@ -24,6 +24,6 @@ class LaradockUpCommand extends Command {
 
         $this->info("Starting containers: $containers");
 
-        passthru("cd {$this->dirname} && docker-compose up $detach $build $containers");
+        passthru("cd {$this->dirname} && docker compose up $detach $build $containers");
     }
 }

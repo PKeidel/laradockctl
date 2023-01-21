@@ -36,7 +36,7 @@ class LaradockExecCommand extends Command {
 
         $cmd = $this->option('cmd');
 
-        $cmd = "docker-compose exec $container $cmd";
+        $cmd = "docker compose exec $container $cmd";
 
         $this->info("Running command: $cmd");
         sleep(1);
